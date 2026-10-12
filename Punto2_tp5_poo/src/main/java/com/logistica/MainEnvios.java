@@ -6,10 +6,13 @@ import com.logistica.Model.Vehiculo;
 import com.logistica.Service.ManagerEnvios;
 import com.logistica.Service.RutaDiaria;
 import java.time.LocalDate;
+import java.util.Scanner;
+import java.util.List;
 
 public class MainEnvios {
     public static void main(String[] args) {
         ManagerEnvios manager = new ManagerEnvios();
+        Scanner teclado = new Scanner(System.in);
 
         // 1. Registrar Vehículos
         Vehiculo v1 = new Vehiculo("AA123BB", 50.0, 200.0);
@@ -20,6 +23,7 @@ public class MainEnvios {
 
         // CASO A: Intentar asignar ruta sin paquetes (Debe fallar)
         RutaDiaria rutaHoy = new RutaDiaria(LocalDate.now(), v1);
+        manager.registrarRuta(rutaHoy);
         rutaHoy.asignarEnvio(envio1);
 
         // Agregar paquetes válidos (Total: 20 kg)
@@ -50,5 +54,33 @@ public class MainEnvios {
         System.out.println("\n--- PRUEBA DE ESTADO (DEVOLUCIÓN) ---");
         envio1.devolver();
         envio1.mostrarInfo();
+        
+
+        System.out.println("\n--- BUSCAR ENVIOS POR PATENTE ---");
+
+        System.out.print("Ingrese la patente del vehiculo: ");
+        String patente = teclado.nextLine().trim();
+
+        List<Envio> enviosEncontrados =
+        		manager.obtenerEnviosPorPatente(patente);
+
+        if (enviosEncontrados.isEmpty()) {
+        	System.out.println(
+        			"No se encontraron envios para la patente " + patente
+        			);
+        } else {
+
+        	System.out.println(
+        			"Envios transportados por el vehiculo " + patente + ":"
+        			);
+
+        	for (Envio envio : enviosEncontrados) {
+        		System.out.println("-------------------------");
+        		envio.mostrarInfo();
+        	}
+        }
+
+        teclado.close();
+
     }
 }
